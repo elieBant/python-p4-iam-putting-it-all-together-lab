@@ -32,11 +32,10 @@ with app.app_context():
 
         user = User(
             username=username,
+            password=username + 'password',
             bio=fake.paragraph(nb_sentences=3),
             image_url=fake.url(),
         )
-
-        user.password_hash = user.username + 'password'
 
         users.append(user)
 
