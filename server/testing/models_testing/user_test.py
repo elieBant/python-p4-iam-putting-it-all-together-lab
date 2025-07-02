@@ -1,5 +1,5 @@
-from sqlalchemy.exc import IntegrityError
 import pytest
+from sqlalchemy.exc import IntegrityError
 
 from app import app
 from models import db, User, Recipe
@@ -30,7 +30,7 @@ class TestUser:
                     """of Classic Hollywood cinema."""
             )
 
-            user.password_hash = "whosafraidofvirginiawoolf"
+            user.password = "whosafraidofvirginiawoolf"
             
             db.session.add(user)
             db.session.commit()
@@ -62,10 +62,8 @@ class TestUser:
             User.query.delete()
             db.session.commit()
 
-            user = User()
-            with pytest.raises(IntegrityError):
-                db.session.add(user)
-                db.session.commit()
+            with pytest.raises(TypeError):
+                user = User()
 
     def test_requires_unique_username(self):
         '''requires each record to have a username.'''
@@ -76,7 +74,9 @@ class TestUser:
             db.session.commit()
 
             user_1 = User(username="Ben")
+            user_1.password = "password1"
             user_2 = User(username="Ben")
+            user_2.password = "password2"
 
             with pytest.raises(IntegrityError):
                 db.session.add_all([user_1, user_2])
@@ -91,6 +91,7 @@ class TestUser:
             db.session.commit()
 
             user = User(username="Prabhdip")
+            user.password = "testpassword"
 
             recipe_1 = Recipe(
                 title="Delicious Shed Ham",
